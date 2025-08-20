@@ -1,19 +1,31 @@
 #!/bin/bash
 set -e
 
-# Download Germany OSM PBF if not already present
-if [ ! -f /nominatim/data.osm.pbf ]; then
-    echo "Downloading Germany OSM extract..."
-    curl -L -o /nominatim/data.osm.pbf https://download.geofabrik.de/europe/germany-latest.osm.pbf
-fi
+# Path to the local OSM PBF
+OSM_PBF="/nominatim/data.osm.pbf"
 
-# Ensure /nominatim folder is writable
+# Ensure /nominatim/data exists
 mkdir -p /nominatim/data
 chown -R root:root /nominatim
 
-# Set PBF file for Nominatim
-export PBF_URL=/nominatim/data.osm.pbf
+# Download Germany PBF if missing
+if [ ! -f "$OSM_PBF" ]; then
+    echo "Downloading Germany OSM extract..."
+    curl -L -o "$OSM_PBF" https://download.geofabrik.de/europe/germany-latest.osm.pbf
+else
+    echo "OSM PBF already exists at $OSM_PBF, skipping download."
+fi
 
-# Run Nominatim import and service
-/app/init.sh
+# Export PBF path for Nominatim
+export PBF_URL="$OSM_PBF"
+
+# Detect CPU cores for multi-threaded import
+THREADS=$(nproc)
+export THREADS
+echo "Using $THREADS threads for import..."
+
+# Run Nominatim import
+/app/init.sh --osmfile "$PBF_URL" --threads "$THREADS"
+
+# Start Nominatim service
 exec /app/run.sh
