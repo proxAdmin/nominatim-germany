@@ -1,6 +1,6 @@
 FROM mediagis/nominatim:5.1
 
-# Install curl for downloading PBF
+# Install curl
 USER root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
@@ -8,7 +8,5 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Run as root to avoid missing nominatim user
 USER root
-
 ENTRYPOINT ["/entrypoint.sh"]
