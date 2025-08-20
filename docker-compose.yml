@@ -1,13 +1,13 @@
+version: '3.8'
+
 services:
   nominatim:
-    build:
-      context: .
-      dockerfile: Dockerfile.nominatim
+    image: mediagis/nominatim:5.1
     container_name: nominatim
+    environment:
+      - PBF_URL=https://download.geofabrik.de/europe/germany-latest.osm.pbf
     ports:
-      - "8081:8080"
-    volumes:
-      - ./nominatim_data:/nominatim/data
+      - "8080:8080"
     stdin_open: true
     tty: true
     restart: unless-stopped
