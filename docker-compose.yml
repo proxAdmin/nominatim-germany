@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  nominatim:
+    build:
+      context: .
+      dockerfile: Dockerfile.nominatim
+    container_name: nominatim
+    ports:
+      - "5111:8080"
+    volumes:
+      - ./nominatim_data:/nominatim/data
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
