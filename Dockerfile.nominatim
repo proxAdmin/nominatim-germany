@@ -1,8 +1,10 @@
 FROM mediagis/nominatim:5.1
 
-USER nominatim
-
+# Copy entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+# Run as root
+USER root
 
 ENTRYPOINT ["/entrypoint.sh"]
